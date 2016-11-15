@@ -1,0 +1,8 @@
+{
+  "name": "Web Optimization project",
+  "version": "0.0.1",
+  "description": "My web optimization project for Udacity Frontend Nanodegree",
+  "devDependencies": {
+    "grunt": "^1.0.1"
+  }
+}
