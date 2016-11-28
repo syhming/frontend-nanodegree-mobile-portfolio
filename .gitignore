@@ -1,4 +1,5 @@
 $ cat .gitignore
 
 # ignoring node directory from being committed to github repository
-node_modules
+node_modules/
+grunt/
