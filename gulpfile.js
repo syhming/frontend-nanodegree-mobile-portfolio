@@ -1,5 +1,6 @@
 var gulp = require('gulp'),
   critical = require('critical'),
+  cachebust = require('gulp-cache-bust'),
   imagemin = require('gulp-imagemin');
 
 //inlining critical css
@@ -29,6 +30,14 @@ gulp.task('imagemin', function() {
     .pipe(gulp.dest('/views/images/*'));
 });
 
+gulp.task('cachebust', function() {
+  return gulp.src(['./*.html', './js/*.js', './css/*.css', '/img/.jpg'])
+      .pipe(cachebust({
+          type: 'timestamp'
+      }))
+      .pipe(gulp.dest('./'));
+});
+
 gulp.task('default', function() {
-  gulp.start('critical', 'imagemin');
+  gulp.start('critical', 'imagemin', 'cachebust');
 });
