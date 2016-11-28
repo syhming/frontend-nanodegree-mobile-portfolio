@@ -1,6 +1,6 @@
 var gulp = require('gulp'),
   critical = require('critical'),
-  imagemin = require('imagemin');
+  imagemin = require('gulp-imagemin');
 
 //inlining critical css
 gulp.task('critical', function(cb) {
@@ -21,9 +21,12 @@ gulp.task('critical', function(cb) {
 
 //optimizing images
 gulp.task('imagemin', function() {
-  return gulp.src('/img')
-    .pipe(imagemin({ optimization: 3, progressive: true, interlaced: true}))
-    .pipe(gulp.dest('/img'));
+  return gulp.src('/img/*')
+    .pipe(imagemin({ optimization: 5, progressive: true, interlaced: true}))
+    .pipe(gulp.dest('/img/'));
+  return gulp.src('/views/images/*')
+    .pipe(imagemin({ optimization: 5, progressive: true, interlaced: true}))
+    .pipe(gulp.dest('/views/images/*'));
 });
 
 gulp.task('default', function() {
