@@ -432,7 +432,7 @@ var resizePizzas = function(size) {
           newWidth = 0.3333;
           break;
         case "3":
-          newWidth 0.5;
+          newWidth =  0.5;
           break;
         default:
           console.log("bug in sizeSwitcher");
