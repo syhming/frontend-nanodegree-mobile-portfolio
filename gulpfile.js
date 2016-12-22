@@ -30,6 +30,7 @@ gulp.task('imagemin', function() {
     .pipe(gulp.dest('/views/images/*'));
 });
 
+//putting a expiration and version on file
 gulp.task('cachebust', function() {
   return gulp.src(['./*.html', './js/*.js', './css/*.css', '/img/.jpg'])
       .pipe(cachebust({
@@ -37,6 +38,8 @@ gulp.task('cachebust', function() {
       }))
       .pipe(gulp.dest('./'));
 });
+
+//add a clean plugin so i can run gulp every time i update
 
 gulp.task('default', function() {
   gulp.start('critical', 'imagemin', 'cachebust');
