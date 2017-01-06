@@ -1,15 +1,37 @@
-var gulp = require('gulp'),
-  critical = require('critical'),
-  cachebust = require('gulp-cache-bust'),
-  imagemin = require('gulp-imagemin');
+var gulp = require('gulp');
+var sass = require('gulp-sass');
+var autoprefixer = require('gulp-autoprefixer');
+var browserSync = require('browser-sync').create();
+var uglify = require('gulp-uglify');
+var eslint = require('gulp-eslint');
+var concat = require('gulp-concat');
+var babel = require('gulp-babel');
+var sourcemaps = require('gulp-sourcemaps');
+var imagemin = require('gulp-imagemin');
+var critical = require('critical');
+
+gulp.task('default', ['critical', 'imagemin', 'copy-html', 'styles', 'scripts'], function() {
+  gulp.watch('src/sass/**/*.scss', ['styles']);
+  gulp.watch('src/views/sass/**/*.scss', ['styles']);
+  gulp.watch('dist/css/**/*.css', ['critical']);
+  gulp.watch('src/js/**/*.js', ['scripts']);
+  gulp.watch('src/img/**/*', ['imagemin']);
+  gulp.watch('src/views/img/**/*', ['imagemin']);
+  gulp.watch('/index.html', ['copy-html']);
+  gulp.watch('./dist/index.html').on('change',browserSync.reload);
+  browserSync.init({
+    server: './dist'
+  });
+});
 
 //inlining critical css
 gulp.task('critical', function(cb) {
   critical.generate({
     inline: true,
     base: './',
-    src: 'index.html',
-    dest: 'index.html',
+    src: 'src/index.html',
+    css: 'dist/css/styles.css',
+    dest: 'dist/index.html',
     minify: true,
     dimensions:[{
       width: 480
@@ -22,25 +44,100 @@ gulp.task('critical', function(cb) {
 
 //optimizing images
 gulp.task('imagemin', function() {
-  return gulp.src('/img/*')
+  gulp.src('src/img/*')
     .pipe(imagemin({ optimization: 5, progressive: true, interlaced: true}))
-    .pipe(gulp.dest('/img/'));
-  return gulp.src('/views/images/*')
+    .pipe(gulp.dest('dist/img/'));
+  gulp.src('src/views/images/*')
     .pipe(imagemin({ optimization: 5, progressive: true, interlaced: true}))
-    .pipe(gulp.dest('/views/images/*'));
+    .pipe(gulp.dest('dist/views/images/'));
 });
 
-//putting a expiration and version on file
-gulp.task('cachebust', function() {
-  return gulp.src(['./*.html', './js/*.js', './css/*.css', '/img/.jpg'])
-      .pipe(cachebust({
-          type: 'timestamp'
-      }))
-      .pipe(gulp.dest('./'));
+//production-ready completion
+gulp.task('dist', [
+  'copy-html',
+  'imagemin',
+  'styles',
+  'critical',
+  'lint',
+  'scripts-dist'
+]);
+
+//port html from source to distribution folder
+gulp.task('copy-html', function() {
+  gulp.src('.index.html')
+    .pipe(gulp.dest('./dist'));
+  gulp.src('./src/views/pizza.html')
+    .pipe(gulp.dest('./dist/views'));
+})
+
+//scripts and scripts-dist will translate es6 code and lint js, concatenate and minify multipe js files into one file from source to distribution
+gulp.task('scripts', function() {
+  gulp.src('src/js/*.js')
+    .pipe(sourcemaps.init())
+    .pipe(babel())
+    .pipe(eslint())
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError())
+    .pipe(concat('all.js'))
+    .pipe(uglify())
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest('dist/js'));
+  gulp.src('src/views/js/*.js')
+    .pipe(sourcemaps.init())
+    .pipe(babel())
+    .pipe(eslint())
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError())
+    .pipe(concat('all.js'))
+    .pipe(uglify())
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest('dist/views/js'));
 });
 
-//add a clean plugin so i can run gulp every time i update
-
-gulp.task('default', function() {
-  gulp.start('critical', 'imagemin', 'cachebust');
+gulp.task('scripts-dist', function() {
+  gulp.src('src/js/*.js')
+    .pipe(babel())
+    .pipe(eslint())
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError())
+    .pipe(concat('all.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest('dist/js'));
+  gulp.src('src/views/js/*.js')
+    .pipe(sourcemaps.init())
+    .pipe(babel())
+    .pipe(eslint())
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError())
+    .pipe(concat('all.js'))
+    .pipe(uglify())
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest('dist/views/js'));
 });
+
+//take sass files and convert to css with an autoprefixer and minifier
+gulp.task('styles', function() {
+  gulp.src('src/sass/**/*.scss')
+    .pipe(sass({
+      outputStyle: 'compressed'
+    }).on('error', sass.logError))
+    .pipe(autoprefixer({
+      browsers: ['last 2 versions']
+    }))
+    .pipe(gulp.dest('dist/css'))
+    .pipe(browserSync.stream());
+  gulp.src('src/views/sass/**/*.scss')
+    .pipe(sass({
+      outputStyle: 'compressed'
+    }).on('error', sass.logError))
+    .pipe(autoprefixer({
+      browsers: ['last 2 versions']
+    }))
+    .pipe(gulp.dest('dist/views/css'));
+});
+
+// Handle the error
+function errorHandler (error) {
+  console.log(error.toString());
+  this.emit('end');
+}
