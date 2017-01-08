@@ -1,6 +1,8 @@
 TODO Need to write a legit readme
-need to fix gulp to clean some things up
+## Run instructions
+The optimizated webpage can be accessed from this link: [Pagespeed score optimization page.](https://syhming.github.io/frontend-nanodegree-mobile-portfolio/dist/index.html)
 
-run instructions
+[The PageSpeed Inssights page is here.](https://developers.google.com/speed/pagespeed/insights/)
+
 
 gulp build instructions
