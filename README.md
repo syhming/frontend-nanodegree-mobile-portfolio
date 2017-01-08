@@ -1,6 +1,6 @@
 TODO Need to write a legit readme
 need to fix gulp to clean some things up
 
-install instructions
+run instructions
 
 gulp build instructions

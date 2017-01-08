@@ -4,7 +4,6 @@ var autoprefixer = require('gulp-autoprefixer');
 var browserSync = require('browser-sync').create();
 var uglify = require('gulp-uglify');
 var eslint = require('gulp-eslint');
-var concat = require('gulp-concat');
 var babel = require('gulp-babel');
 var sourcemaps = require('gulp-sourcemaps');
 var imagemin = require('gulp-imagemin');
@@ -58,8 +57,7 @@ gulp.task('dist', [
   'imagemin',
   'styles',
   'critical',
-  'lint',
-  'scripts-dist'
+  'scripts'
 ]);
 
 //port html from source to distribution folder
@@ -70,7 +68,7 @@ gulp.task('copy-html', function() {
     .pipe(gulp.dest('./dist/views'));
 })
 
-//scripts and scripts-dist will translate es6 code and lint js, concatenate and minify multipe js files into one file from source to distribution
+//scripts and scripts-dist will translate es6 code, lint js, and minify multipe js files into one file from source to distribution
 gulp.task('scripts', function() {
   gulp.src('src/js/*.js')
     .pipe(sourcemaps.init())
@@ -78,41 +76,9 @@ gulp.task('scripts', function() {
     .pipe(eslint())
     .pipe(eslint.format())
     .pipe(eslint.failAfterError())
-    .pipe(concat('all.js'))
     .pipe(uglify())
     .pipe(sourcemaps.write())
     .pipe(gulp.dest('dist/js'));
-  gulp.src('src/views/js/*.js')
-    .pipe(sourcemaps.init())
-    .pipe(babel())
-    .pipe(eslint())
-    .pipe(eslint.format())
-    .pipe(eslint.failAfterError())
-    .pipe(concat('all.js'))
-    .pipe(uglify())
-    .pipe(sourcemaps.write())
-    .pipe(gulp.dest('dist/views/js'));
-});
-
-gulp.task('scripts-dist', function() {
-  gulp.src('src/js/*.js')
-    .pipe(babel())
-    .pipe(eslint())
-    .pipe(eslint.format())
-    .pipe(eslint.failAfterError())
-    .pipe(concat('all.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest('dist/js'));
-  gulp.src('src/views/js/*.js')
-    .pipe(sourcemaps.init())
-    .pipe(babel())
-    .pipe(eslint())
-    .pipe(eslint.format())
-    .pipe(eslint.failAfterError())
-    .pipe(concat('all.js'))
-    .pipe(uglify())
-    .pipe(sourcemaps.write())
-    .pipe(gulp.dest('dist/views/js'));
 });
 
 //take sass files and convert to css with an autoprefixer and minifier
@@ -126,14 +92,6 @@ gulp.task('styles', function() {
     }))
     .pipe(gulp.dest('dist/css'))
     .pipe(browserSync.stream());
-  gulp.src('src/views/sass/**/*.scss')
-    .pipe(sass({
-      outputStyle: 'compressed'
-    }).on('error', sass.logError))
-    .pipe(autoprefixer({
-      browsers: ['last 2 versions']
-    }))
-    .pipe(gulp.dest('dist/views/css'));
 });
 
 // Handle the error

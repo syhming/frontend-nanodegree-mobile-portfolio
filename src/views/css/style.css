@@ -33,7 +33,8 @@ form {
 .mover {
   float: left;
   position: fixed;
-  width: 256px;
+  width: 56px;
+  height: 73px;
   z-index: -1;
 }
 

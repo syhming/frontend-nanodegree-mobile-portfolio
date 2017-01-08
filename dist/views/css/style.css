@@ -1,10 +1,10 @@
-/*bringing in bootstrap*/
-@import 'dist/views/css/bootsrap-grid.css';
-
+/** {
+  outline: 1px solid red !important;
+}*/
 * {
-  -webkit-box-sizing: content-box;
-  -moz-box-sizing: content-box;
-  -box-sizing: content-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -box-sizing: border-box;
 }
 
 body {
@@ -30,9 +30,9 @@ form {
 }
 
 .mover {
-  float: left;
   position: fixed;
-  width: 256px;
+  height: 73px;
+  width: 56px;
   z-index: -1;
 }
 
