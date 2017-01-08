@@ -1,7 +1,6 @@
 var gulp = require('gulp');
 var sass = require('gulp-sass');
 var autoprefixer = require('gulp-autoprefixer');
-var browserSync = require('browser-sync').create();
 var uglify = require('gulp-uglify');
 var eslint = require('gulp-eslint');
 var babel = require('gulp-babel');
@@ -17,10 +16,6 @@ gulp.task('default', ['critical', 'imagemin', 'copy-html', 'styles', 'scripts'],
   gulp.watch('src/img/**/*', ['imagemin']);
   gulp.watch('src/views/img/**/*', ['imagemin']);
   gulp.watch('/index.html', ['copy-html']);
-  gulp.watch('./dist/index.html').on('change',browserSync.reload);
-  browserSync.init({
-    server: './dist'
-  });
 });
 
 //inlining critical css
@@ -91,7 +86,6 @@ gulp.task('styles', function() {
       browsers: ['last 2 versions']
     }))
     .pipe(gulp.dest('dist/css'))
-    .pipe(browserSync.stream());
 });
 
 // Handle the error
